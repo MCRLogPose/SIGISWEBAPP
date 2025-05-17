@@ -1,0 +1,47 @@
+package com.sigis.prueba.auth.security;
+
+import com.sigis.prueba.auth.model.UserModel;
+import io.jsonwebtoken.*;
+import org.springframework.stereotype.Service;
+import javax.crypto.SecretKey;
+import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+
+@Service
+public class JWTService {
+
+    private final String SECRET_KEY_STRING = "3S!g#tZfQd@8LpW&vCk$R9mXn#Ye^bTu"; // mínimo 256 bits (~32 caracteres)
+
+    private final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(SECRET_KEY_STRING.getBytes(StandardCharsets.UTF_8));
+
+    public String generateToken(UserModel user) {
+        return Jwts.builder()
+                .setSubject(user.getUsername())
+                .claim("role", user.getRol().getTipoRol())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 horas
+                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public Claims extractClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(SECRET_KEY)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public String extractUsername(String token) {
+        return extractClaims(token).getSubject();
+    }
+
+    public boolean isTokenExpired(String token) {
+        return extractClaims(token).getExpiration().before(new Date());
+    }
+
+    public boolean validateToken(String token, UserModel user) {
+        return user.getUsername().equals(extractUsername(token)) && !isTokenExpired(token);
+    }
+}

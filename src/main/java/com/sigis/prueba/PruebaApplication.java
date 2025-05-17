@@ -1,13 +1,13 @@
-package com.sigis;
+package com.sigis.prueba;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SigisAppApplication {
+public class PruebaApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SigisAppApplication.class, args);
+		SpringApplication.run(PruebaApplication.class, args);
 	}
 
 }
