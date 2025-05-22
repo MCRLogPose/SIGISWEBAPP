@@ -1,5 +1,6 @@
 package com.sigis.prueba.auth.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -21,9 +22,11 @@ public class UserModel {
     private String username;
     private String password;
     private String correo;
+    private String estado;
 
     @ManyToOne
     @JoinColumn(name = "rol_id")
+    @JsonManagedReference
     private RolModel rol;
 
     @OneToOne(mappedBy = "user")
@@ -32,10 +35,13 @@ public class UserModel {
     @OneToOne(mappedBy = "user")
     private CredentialsModel userCredentials;
 
-    @OneToOne(mappedBy = "user")
-    private TokenModel tokenModel;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 
-    private String estado;
+    private List<TokenModel> tokens;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private OperarioDetails operarioDetails;
+
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt = new Date();

@@ -1,7 +1,10 @@
 package com.sigis.prueba.auth.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -12,4 +15,12 @@ public class RolModel {
     private long id;
 
     private String tipoRol;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "roles_modulos",
+            joinColumns = @JoinColumn(name = "rol_id"),
+            inverseJoinColumns = @JoinColumn(name = "modulo_id")
+    )
+    @JsonManagedReference
+    private List<ModuloModel> modulos;
 }

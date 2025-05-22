@@ -3,6 +3,7 @@ package com.sigis.prueba.auth.controller;
 import com.sigis.prueba.auth.dto.LoginRequest;
 import com.sigis.prueba.auth.dto.LoginResponse;
 import com.sigis.prueba.auth.dto.RegisterRequest;
+import com.sigis.prueba.auth.dto.RegisterResponse;
 import com.sigis.prueba.auth.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<LoginResponse> register(@RequestBody RegisterRequest request){
+    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request){
         return ResponseEntity.ok(authService.register(request));
     }
 

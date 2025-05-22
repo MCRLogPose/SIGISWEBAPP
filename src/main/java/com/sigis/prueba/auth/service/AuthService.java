@@ -1,5 +1,6 @@
 package com.sigis.prueba.auth.service;
 
+import com.sigis.prueba.auth.dto.RegisterResponse;
 import com.sigis.prueba.auth.model.*;
 import com.sigis.prueba.auth.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import com.sigis.prueba.auth.dto.LoginResponse;
 import com.sigis.prueba.auth.dto.RegisterRequest;
 import com.sigis.prueba.auth.dto.LoginRequest;
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.List;
 
 @Service
 public class AuthService {
@@ -40,7 +43,7 @@ public class AuthService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public LoginResponse register(RegisterRequest request){
+    public RegisterResponse register(RegisterRequest request){
         if (userRepository.existsByUsername(request.getUsername())){
             throw new RuntimeException("El username ya esta en uso");
         }
@@ -81,27 +84,16 @@ public class AuthService {
         user2FARepository.save(twoFA);
 
         String jwt=jwtService.generateToken(savedUser);
-        return new LoginResponse(jwt);
+        return new RegisterResponse(jwt);
     }
 
     public LoginResponse login(LoginRequest request, HttpServletRequest httpRequest){
         UserModel user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        CredentialsModel credentials = userCredentialsRepository.findByUser(user);
-
-        if (credentials == null) {
-            throw new RuntimeException("Credenciales no encontradas");
-        }
-
-        if (!passwordEncoder.matches(request.getPassword(), credentials.getPasswordHash())) {
-            throw new RuntimeException("Credenciales incorrectas");
-        }
 
         if (user.getUser2FA() != null && user.getUser2FA().getEnabled()) {
             throw new RuntimeException("2FA requerido");
         }
-        String ipAddress = httpRequest.getRemoteAddr();
-        String userAgent = httpRequest.getHeader("User-Agent");
 
         String jwt = jwtService.generateToken(user);
         TokenModel tokenRecord = new TokenModel();
@@ -109,10 +101,14 @@ public class AuthService {
         tokenRecord.setRefreshToken(jwt);
         tokenRecord.setRevoked(false);
         tokenRecord.setExpired(false);
-        tokenRecord.setIpAddress(ipAddress);
-        tokenRecord.setUserAgent(userAgent);
+        tokenRecord.setIpAddress(httpRequest.getRemoteAddr());
+        tokenRecord.setUserAgent(httpRequest.getHeader("User-Agent"));
         userTokensRepository.save(tokenRecord);
 
-        return new LoginResponse(jwt);
+        List<String> modulos = user.getRol().getModulos()
+                .stream().map(ModuloModel::getNombre).toList();
+
+        return new LoginResponse(jwt, user.getUsername(), user.getRol().getTipoRol(), modulos);
     }
+
 }
