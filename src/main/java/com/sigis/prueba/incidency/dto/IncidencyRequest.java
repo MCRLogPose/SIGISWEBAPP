@@ -1,6 +1,7 @@
 package com.sigis.prueba.incidency.dto;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class IncidencyRequest {
@@ -8,7 +9,7 @@ public class IncidencyRequest {
     private String descripcion;
     private String fechaEmision;
     private String prioridad;
-    private String imagen;
+    private MultipartFile imagen;
     private String fechaAccept;
     private String estado;
 

@@ -13,21 +13,19 @@ import java.util.List;
 
 @RestController
 
-@RequestMapping("/api/")
+@RequestMapping("/api/incidencias")
 public class IncidencyController {
 
     @Autowired
     private IncidencyService incidencyService;
 
-    @PostMapping ("/incidencias")
-    public ResponseEntity<IncidencyResponse> create(@RequestBody IncidencyRequest dto){
-        IncidencyResponse created = incidencyService.createIncidency(dto);
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
+    @PostMapping(consumes = "multipart/form-data")
+    public IncidencyResponse createIncidency(@ModelAttribute IncidencyRequest request) {
+        return incidencyService.createIncidency(request);
     }
 
-    @GetMapping ("/incidencias")
-    public ResponseEntity<List<IncidencyResponse>> getAll(){
-        List<IncidencyResponse> list = incidencyService.getAll();
-        return ResponseEntity.ok(list);
+    @GetMapping
+    public List<IncidencyResponse> getAll() {
+        return incidencyService.getAll();
     }
 }
