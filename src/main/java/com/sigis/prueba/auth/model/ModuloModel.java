@@ -14,12 +14,12 @@ public class ModuloModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nombre;  // ej. "Crear Incidencia", "Aceptar Incidencia", "Asignar Incidencia"
+    private String nombre;
 
     private String descripcion;
 
     @ManyToMany(mappedBy = "modulos")
-    @JsonIgnore  // Para evitar ciclos si es que se llegara a serializar
+    @JsonIgnore
     private List<RolModel> roles;
 
 }

@@ -12,7 +12,6 @@ public class IncidencyRequest {
     private String fechaAccept;
     private String estado;
 
-    private Long userId;
     private Long categoriaId;
     private Long ubicacionId;
 }

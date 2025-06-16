@@ -31,16 +31,6 @@ public class DataLoader implements CommandLineRunner {
             aceptarIncidencia.setDescripcion("Permite aceptar tareas asignadas");
             moduloRepository.save(aceptarIncidencia);
 
-            RolModel usuario = new RolModel();
-            usuario.setTipoRol("usuario");
-            usuario.setModulos(List.of(crearIncidencia));
-            rolRepository.save(usuario);
-
-            RolModel operario = new RolModel();
-            operario.setTipoRol("operario");
-            operario.setModulos(List.of(crearIncidencia, aceptarIncidencia));
-            rolRepository.save(operario);
-
     }
 }
 

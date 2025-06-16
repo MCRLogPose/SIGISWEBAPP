@@ -9,6 +9,9 @@ import com.sigis.prueba.incidency.repository.IncidencyRepository;
 import com.sigis.prueba.incidency.repository.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
+import com.sigis.prueba.auth.model.UserModel;
 
 import java.util.List;
 
@@ -40,20 +43,11 @@ public class IncidencyService {
     }
 
     public IncidencyResponse createIncidency(IncidencyRequest dto) {
-        System.out.println("DTO recibido:");
-        System.out.println("UserId = " + dto.getUserId());
-        System.out.println("CategoriaId = " + dto.getCategoriaId());
-        System.out.println("UbicacionId = " + dto.getUbicacionId());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
 
-        if (dto.getUserId() == null) {
-            throw new IllegalArgumentException("UserId no puede ser null");
-        }
-        if (dto.getCategoriaId() == null) {
-            throw new IllegalArgumentException("CategoriaId no puede ser null");
-        }
-        if (dto.getUbicacionId() == null) {
-            throw new IllegalArgumentException("UbicacionId no puede ser null");
-        }
+        UserModel user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con username: " + username));
 
         IncidencyModel incidency = new IncidencyModel();
         incidency.setTitle(dto.getTitle());
@@ -64,9 +58,12 @@ public class IncidencyService {
         incidency.setFechaAccept(dto.getFechaAccept());
         incidency.setEstado(dto.getEstado());
 
-        incidency.setUser(userRepository.findById(dto.getUserId()).orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + dto.getUserId())));
-        incidency.setCategoria(categoryRepository.findById(dto.getCategoriaId()).orElseThrow(() -> new RuntimeException("Categoria no encontrada con id: " + dto.getCategoriaId())));
-        incidency.setUbicacion(locationRepository.findById(dto.getUbicacionId()).orElseThrow(() -> new RuntimeException("Ubicacion no encontrada con id: " + dto.getUbicacionId())));
+        incidency.setUser(user);
+
+        incidency.setCategoria(categoryRepository.findById(dto.getCategoriaId())
+                .orElseThrow(() -> new RuntimeException("Categoria no encontrada con id: " + dto.getCategoriaId())));
+        incidency.setUbicacion(locationRepository.findById(dto.getUbicacionId())
+                .orElseThrow(() -> new RuntimeException("Ubicacion no encontrada con id: " + dto.getUbicacionId())));
 
         IncidencyModel saved = incidencyRepository.save(incidency);
         return toResponse(saved);
