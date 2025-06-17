@@ -2,10 +2,12 @@ package com.sigis.prueba.asignaciones.service;
 
 import com.sigis.prueba.asignaciones.dto.AsignacionRequest;
 import com.sigis.prueba.asignaciones.dto.AsignacionResponse;
+import com.sigis.prueba.asignaciones.mapper.AsignacionMapper;
 import com.sigis.prueba.asignaciones.model.AsignacionModel;
 import com.sigis.prueba.asignaciones.repository.AsignacionRepository;
 import com.sigis.prueba.auth.model.UserModel;
 import com.sigis.prueba.auth.repository.UserRepository;
+import com.sigis.prueba.incidency.model.IncidencyModel;
 import com.sigis.prueba.incidency.repository.IncidencyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,9 @@ public class AsignacionService {
     @Autowired
     private AsignacionRepository asignacionRepository;
 
+    @Autowired
+    private AsignacionMapper asignacionMapper;
+
     public AsignacionResponse createAsignacion(AsignacionRequest dto) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -36,37 +41,26 @@ public class AsignacionService {
         UserModel user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con username: " + username));
 
+        var incidencia = incidencyRepository.findById(dto.getIncidencyId())
+                .orElseThrow(() -> new RuntimeException("Incidencia no encontrada con id: " + dto.getIncidencyId()));
+        incidencia.setEstado("asignado");
+        incidencyRepository.save(incidencia);
+
         AsignacionModel asignacion = new AsignacionModel();
         asignacion.setUser(user);
         asignacion.setResponse(dto.getResponse());
+        asignacion.setEstado("asignado");
+        asignacion.setIncidencyModel(incidencia);
 
-        asignacion.setIncidencyModel(incidencyRepository.findById(dto.getIncidencyId())
-                .orElseThrow(() -> new RuntimeException("Incidencia no encontrada con id: " + dto.getIncidencyId())));
-
-        AsignacionModel saved = asignacionRepository.save(asignacion);
-
-        AsignacionResponse response = new AsignacionResponse();
-        response.setId(saved.getId());
-        response.setUserId(saved.getUser().getId());
-        response.setIncidencyId(saved.getIncidencyModel().getId());
-        response.setResponse(saved.getResponse());
-        response.setFechaAsignacion(saved.getFechaAsignacion());
-
-        return response;
+        return asignacionMapper.toResponse(asignacionRepository.save(asignacion));
     }
+
     public List<AsignacionResponse> getAllAsignaciones() {
         return asignacionRepository.findAll().stream()
-                .map(this::toResponse)
+                .map(asignacionMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
-    private AsignacionResponse toResponse(AsignacionModel model) {
-        AsignacionResponse response = new AsignacionResponse();
-        response.setId(model.getId());
-        response.setUserId(model.getUser().getId());
-        response.setIncidencyId(model.getIncidencyModel().getId());
-        response.setResponse(model.getResponse());
-        response.setFechaAsignacion(model.getFechaAsignacion());
-        return response;
-    }
+
+
 }

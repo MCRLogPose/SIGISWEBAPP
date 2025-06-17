@@ -10,5 +10,6 @@ public class AsignacionResponse {
     private Long userId;
     private Long incidencyId;
     private String response;
+    private String estado;
     private Date fechaAsignacion;
 }

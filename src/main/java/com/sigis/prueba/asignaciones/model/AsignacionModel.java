@@ -17,6 +17,7 @@ public class AsignacionModel {
 
     private long id;
     private String response;
+    private String estado;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaAsignacion = new Date();

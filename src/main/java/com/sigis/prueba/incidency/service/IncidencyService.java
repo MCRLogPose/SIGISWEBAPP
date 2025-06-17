@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class IncidencyService {
@@ -82,5 +83,29 @@ public class IncidencyService {
                 .map(incidencyMapper::toResponse)
                 .toList();
     }
+
+    public IncidencyResponse verificarYCompletarIncidencia(Long incidenciaId) {
+        IncidencyModel incidencia = incidencyRepository.findById(incidenciaId)
+                .orElseThrow(() -> new RuntimeException("Incidencia no encontrada con ID: " + incidenciaId));
+
+        incidencia.setEstado("completado");
+        incidencyRepository.save(incidencia);
+
+        return incidencyMapper.toResponse(incidencia);
+    }
+    public List<IncidencyResponse> getIncidenciasCulminadas() {
+        return incidencyRepository.findByEstado("culminada")
+                .stream()
+                .map(incidencyMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<IncidencyResponse> getIncidenciasCompletadas() {
+        return incidencyRepository.findByEstado("completado")
+                .stream()
+                .map(incidencyMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
 
 }
