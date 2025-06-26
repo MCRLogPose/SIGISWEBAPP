@@ -11,15 +11,15 @@ public class IncidencyMapper {
         IncidencyResponse response = new IncidencyResponse();
         response.setId(model.getId());
         response.setTitle(model.getTitle());
-        response.setDescripcion(model.getDescripcion());
-        response.setFechaEmision(model.getFechaEmision());
-        response.setPrioridad(model.getPrioridad());
-        response.setImagen(model.getImagen());
-        response.setFechaAccept(model.getFechaAccept());
-        response.setEstado(model.getEstado());
+        response.setDescription(model.getDescription());
+        response.setDateEmision(model.getDateEmision());
+        response.setPriority(model.getPriority());
+        response.setImage(model.getImage());
+        response.setDateAccept(model.getDateAccept());
+        response.setState(model.getState());
         response.setUserId(model.getUser().getId());
-        response.setCategoriaId(model.getCategoria().getId());
-        response.setUbicacionId(model.getUbicacion().getId());
+        response.setCategoryId(model.getCategory().getId());
+        response.setLocationId(model.getLocation().getId());
         return response;
     }
 }

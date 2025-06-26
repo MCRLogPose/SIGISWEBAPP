@@ -1,8 +1,9 @@
 package com.sigis.prueba.auth.service;
 
-import com.sigis.prueba.auth.dto.RegisterResponse;
+import com.sigis.prueba.auth.dto.*;
 import com.sigis.prueba.auth.model.*;
 import com.sigis.prueba.auth.repository.*;
+import com.sigis.prueba.incidency.dto.IncidencyResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,9 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.sigis.prueba.auth.security.JWTService;
-import com.sigis.prueba.auth.dto.LoginResponse;
-import com.sigis.prueba.auth.dto.RegisterRequest;
-import com.sigis.prueba.auth.dto.LoginRequest;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
@@ -109,6 +107,25 @@ public class AuthService {
                 .stream().map(ModuloModel::getNombre).toList();
 
         return new LoginResponse(jwt, user.getUsername(), user.getRol().getTipoRol(), modulos);
+    }
+
+    public List<UserResponse> getAllUsers() {
+        return userRepository.findAll().stream().map(user -> {
+            UserResponse dto = new UserResponse();
+            dto.setNombre(user.getNombre());
+            dto.setApellidos(user.getApellidos());
+            dto.setTelefono(user.getTelefono());
+            dto.setDni(user.getDni());
+            dto.setUsername(user.getUsername());
+            dto.setCorreo(user.getCorreo());
+            dto.setRol(user.getRol().getTipoRol());
+            dto.setModulos(
+                    user.getRol().getModulos().stream()
+                            .map(ModuloModel::getNombre)
+                            .toList()
+            );
+            return dto;
+        }).toList();
     }
 
 }

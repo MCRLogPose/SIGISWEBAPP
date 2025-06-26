@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table (name = "categorias")
+@Table (name = "categories")
 
 public class CategoryModel {
 
@@ -13,5 +13,5 @@ public class CategoryModel {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
 
     private long id;
-    private String tipoCategoria;
+    private String typeCategory;
 }

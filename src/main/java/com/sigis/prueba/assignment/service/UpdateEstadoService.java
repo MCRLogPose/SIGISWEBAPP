@@ -1,9 +1,9 @@
-package com.sigis.prueba.asignaciones.service;
+package com.sigis.prueba.assignment.service;
 
-import com.sigis.prueba.asignaciones.dto.AsignacionResponse;
-import com.sigis.prueba.asignaciones.mapper.AsignacionMapper;
-import com.sigis.prueba.asignaciones.model.AsignacionModel;
-import com.sigis.prueba.asignaciones.repository.AsignacionRepository;
+import com.sigis.prueba.assignment.dto.AssignmentResponse;
+import com.sigis.prueba.assignment.mapper.AsignacionMapper;
+import com.sigis.prueba.assignment.model.AssignmentModel;
+import com.sigis.prueba.assignment.repository.AssignmentRepository;
 import com.sigis.prueba.auth.model.UserModel;
 import com.sigis.prueba.auth.repository.UserRepository;
 import com.sigis.prueba.incidency.model.IncidencyModel;
@@ -19,7 +19,7 @@ public class UpdateEstadoService {
     private UserRepository userRepository;
 
     @Autowired
-    private AsignacionRepository asignacionRepository;
+    private AssignmentRepository asignacionRepository;
 
     @Autowired
     private IncidencyRepository incidencyRepository;
@@ -28,38 +28,38 @@ public class UpdateEstadoService {
     private AsignacionMapper asignacionMapper;
 
 
-    public AsignacionResponse updateResponse(Long asignacionId, String respuesta) {
+    public AssignmentResponse updateResponse(Long asignacionId, String respuesta) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         UserModel user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con username: " + username));
 
-        AsignacionModel asignacion = asignacionRepository.findById(asignacionId)
+        AssignmentModel asignacion = asignacionRepository.findById(asignacionId)
                 .orElseThrow(() -> new RuntimeException("Asignación no encontrada con id: " + asignacionId));
 
         asignacion.setUser(user);
         asignacion.setResponse(respuesta);
-        asignacion.setEstado("en proceso");
+        asignacion.setState("en proceso");
         asignacionRepository.save(asignacion);
 
         IncidencyModel incidencia = asignacion.getIncidencyModel();
-        if ("asignado".equalsIgnoreCase(incidencia.getEstado())) {
-            incidencia.setEstado("en proceso");
+        if ("asignado".equalsIgnoreCase(incidencia.getState())) {
+            incidencia.setState("en proceso");
             incidencyRepository.save(incidencia);
         }
         return asignacionMapper.toResponse(asignacion);
     }
-    public AsignacionResponse culminarAsignacion(Long asignacionId) {
+    public AssignmentResponse culminarAsignacion(Long asignacionId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         UserModel user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con username: " + username));
 
-        AsignacionModel asignacion = asignacionRepository.findById(asignacionId)
+        AssignmentModel asignacion = asignacionRepository.findById(asignacionId)
                 .orElseThrow(() -> new RuntimeException("Asignación no encontrada con ID: " + asignacionId));
 
         asignacion.setUser(user);
-        asignacion.setEstado("culminado");
+        asignacion.setState("culminado");
         asignacionRepository.save(asignacion);
 
         return asignacionMapper.toResponse(asignacion);

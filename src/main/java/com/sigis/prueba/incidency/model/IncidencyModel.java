@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table (name = "incidencias")
+@Table (name = "incidents")
 
 public class IncidencyModel {
 
@@ -17,12 +17,12 @@ public class IncidencyModel {
 
     private long id;
     private String title;
-    private String descripcion;
-    private String fechaEmision;
-    private String prioridad;
-    private String imagen;
-    private String fechaAccept;
-    private String estado;
+    private String description;
+    private String dateEmision;
+    private String priority;
+    private String image;
+    private String dateAccept;
+    private String state;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -30,11 +30,11 @@ public class IncidencyModel {
 
     @ManyToOne
     @JoinColumn(name = "categoria_id", referencedColumnName = "id")
-    private CategoryModel categoria;
+    private CategoryModel category;
 
     @ManyToOne
-    @JoinColumn(name = "ubicacion_id", referencedColumnName = "id")
-    private LocationModel ubicacion;
+    @JoinColumn(name = "location_id", referencedColumnName = "id")
+    private LocationModel location;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt = new Date();

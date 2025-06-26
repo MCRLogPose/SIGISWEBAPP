@@ -1,15 +1,15 @@
-package com.sigis.prueba.asignaciones.dto;
+package com.sigis.prueba.assignment.dto;
 
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-public class AsignacionResponse {
+public class AssignmentResponse {
     private Long id;
     private Long userId;
     private Long incidencyId;
     private String response;
-    private String estado;
-    private Date fechaAsignacion;
+    private String state;
+    private Date dateAssignment;
 }

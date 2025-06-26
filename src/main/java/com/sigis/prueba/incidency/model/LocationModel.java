@@ -5,7 +5,7 @@
 
     @Data
     @Entity
-    @Table (name = "ubicacion")
+    @Table (name = "location")
 
     public class LocationModel {
 
@@ -13,7 +13,7 @@
         @GeneratedValue (strategy = GenerationType.IDENTITY)
 
         private long id;
-        private String pabellon;
-        private int piso;
-        private String descripcion;
+        private String pavilion;
+        private int floor;
+        private String reference;
     }

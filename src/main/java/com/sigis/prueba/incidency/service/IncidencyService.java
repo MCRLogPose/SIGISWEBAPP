@@ -31,6 +31,7 @@ public class IncidencyService {
     private LocationRepository locationRepository;
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private IncidencyMapper incidencyMapper;
 
@@ -43,23 +44,23 @@ public class IncidencyService {
 
         IncidencyModel incidency = new IncidencyModel();
         incidency.setTitle(dto.getTitle());
-        incidency.setDescripcion(dto.getDescripcion());
-        incidency.setFechaEmision(dto.getFechaEmision());
-        incidency.setPrioridad(dto.getPrioridad());
+        incidency.setDescription(dto.getDescription());
+        incidency.setDateEmision(dto.getDateEmision());
+        incidency.setPriority(dto.getPriority());
 
-        incidency.setFechaAccept(dto.getFechaAccept());
-        incidency.setEstado(dto.getEstado());
+        incidency.setDateAccept(dto.getDateAccept());
+        incidency.setState(dto.getState());
 
         incidency.setUser(user);
 
-        incidency.setCategoria(categoryRepository.findById(dto.getCategoriaId())
-                .orElseThrow(() -> new RuntimeException("Categoria no encontrada con id: " + dto.getCategoriaId())));
-        incidency.setUbicacion(locationRepository.findById(dto.getUbicacionId())
-                .orElseThrow(() -> new RuntimeException("Ubicacion no encontrada con id: " + dto.getUbicacionId())));
-        if (dto.getImagen() != null && !dto.getImagen().isEmpty()) {
+        incidency.setCategory(categoryRepository.findById(dto.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Categoria no encontrada con id: " + dto.getCategoryId())));
+        incidency.setLocation(locationRepository.findById(dto.getLocationId())
+                .orElseThrow(() -> new RuntimeException("Ubicacion no encontrada con id: " + dto.getLocationId())));
+        if (dto.getImage() != null && !dto.getImage().isEmpty()) {
             try {
                 String uploadsDir = "uploads/";
-                String originalFilename = dto.getImagen().getOriginalFilename();
+                String originalFilename = dto.getImage().getOriginalFilename();
                 Path uploadPath = Paths.get(uploadsDir);
 
                 if (!Files.exists(uploadPath)) {
@@ -67,9 +68,9 @@ public class IncidencyService {
                 }
 
                 Path filePath = uploadPath.resolve(originalFilename);
-                Files.copy(dto.getImagen().getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(dto.getImage().getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-                incidency.setImagen(originalFilename);
+                incidency.setImage(originalFilename);
             } catch (Exception e) {
                 throw new RuntimeException("Error al guardar la imagen en el servidor", e);
             }
@@ -88,20 +89,21 @@ public class IncidencyService {
         IncidencyModel incidencia = incidencyRepository.findById(incidenciaId)
                 .orElseThrow(() -> new RuntimeException("Incidencia no encontrada con ID: " + incidenciaId));
 
-        incidencia.setEstado("completado");
+        incidencia.setState("completado");
         incidencyRepository.save(incidencia);
 
         return incidencyMapper.toResponse(incidencia);
     }
+
     public List<IncidencyResponse> getIncidenciasCulminadas() {
-        return incidencyRepository.findByEstado("culminada")
+        return incidencyRepository.findByState("culminada")
                 .stream()
                 .map(incidencyMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
     public List<IncidencyResponse> getIncidenciasCompletadas() {
-        return incidencyRepository.findByEstado("completado")
+        return incidencyRepository.findByState("completado")
                 .stream()
                 .map(incidencyMapper::toResponse)
                 .collect(Collectors.toList());

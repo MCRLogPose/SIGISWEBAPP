@@ -1,30 +1,30 @@
 package com.sigis.prueba.incidency.controller;
 
-import com.sigis.prueba.asignaciones.dto.AsignacionResponse;
-import com.sigis.prueba.asignaciones.service.AsignacionService;
+import com.sigis.prueba.assignment.service.AssignmentService;
+import com.sigis.prueba.auth.dto.UserResponse;
+import com.sigis.prueba.auth.service.AuthService;
 import com.sigis.prueba.incidency.dto.IncidencyRequest;
 import com.sigis.prueba.incidency.dto.IncidencyResponse;
-import com.sigis.prueba.incidency.model.IncidencyModel;
 import com.sigis.prueba.incidency.service.IncidencyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
-@RequestMapping("/api/incidencias")
-@Tag(name = "Incidencias")
+@RequestMapping("/api/incidents")
+@Tag(name = "Incidents")
 public class IncidencyController {
 
     @Autowired
     private IncidencyService incidencyService;
     @Autowired
-    private AsignacionService asignacionService;
+    private AssignmentService asignacionService;
+    @Autowired
+    private AuthService authService;
 
     @PostMapping(consumes = "multipart/form-data")
     public IncidencyResponse createIncidency(@ModelAttribute IncidencyRequest request) {
@@ -41,9 +41,14 @@ public class IncidencyController {
         return incidencyService.getIncidenciasCulminadas();
     }
 
-    @GetMapping("/completadas")
+    @GetMapping("/completed")
     public List<IncidencyResponse> getCompletadas() {
         return incidencyService.getIncidenciasCompletadas();
     }
 
+    @GetMapping("/users")
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        List<UserResponse> users = authService.getAllUsers();
+        return ResponseEntity.ok(users);
+    }
 }

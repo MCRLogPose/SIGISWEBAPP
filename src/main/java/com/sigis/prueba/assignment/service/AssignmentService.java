@@ -1,13 +1,12 @@
-package com.sigis.prueba.asignaciones.service;
+package com.sigis.prueba.assignment.service;
 
-import com.sigis.prueba.asignaciones.dto.AsignacionRequest;
-import com.sigis.prueba.asignaciones.dto.AsignacionResponse;
-import com.sigis.prueba.asignaciones.mapper.AsignacionMapper;
-import com.sigis.prueba.asignaciones.model.AsignacionModel;
-import com.sigis.prueba.asignaciones.repository.AsignacionRepository;
+import com.sigis.prueba.assignment.dto.AssignmentRequest;
+import com.sigis.prueba.assignment.dto.AssignmentResponse;
+import com.sigis.prueba.assignment.mapper.AsignacionMapper;
+import com.sigis.prueba.assignment.model.AssignmentModel;
+import com.sigis.prueba.assignment.repository.AssignmentRepository;
 import com.sigis.prueba.auth.model.UserModel;
 import com.sigis.prueba.auth.repository.UserRepository;
-import com.sigis.prueba.incidency.model.IncidencyModel;
 import com.sigis.prueba.incidency.repository.IncidencyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,11 +14,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.Authentication;
 
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
-public class AsignacionService {
+public class AssignmentService {
 
     @Autowired
     private UserRepository userRepository;
@@ -28,12 +26,12 @@ public class AsignacionService {
     private IncidencyRepository incidencyRepository;
 
     @Autowired
-    private AsignacionRepository asignacionRepository;
+    private AssignmentRepository asignacionRepository;
 
     @Autowired
     private AsignacionMapper asignacionMapper;
 
-    public AsignacionResponse createAsignacion(AsignacionRequest dto) {
+    public AssignmentResponse createAsignacion(AssignmentRequest dto) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -43,19 +41,19 @@ public class AsignacionService {
 
         var incidencia = incidencyRepository.findById(dto.getIncidencyId())
                 .orElseThrow(() -> new RuntimeException("Incidencia no encontrada con id: " + dto.getIncidencyId()));
-        incidencia.setEstado("asignado");
+        incidencia.setState("asignado");
         incidencyRepository.save(incidencia);
 
-        AsignacionModel asignacion = new AsignacionModel();
+        AssignmentModel asignacion = new AssignmentModel();
         asignacion.setUser(user);
         asignacion.setResponse(dto.getResponse());
-        asignacion.setEstado("asignado");
+        asignacion.setState("asignado");
         asignacion.setIncidencyModel(incidencia);
 
         return asignacionMapper.toResponse(asignacionRepository.save(asignacion));
     }
 
-    public List<AsignacionResponse> getAllAsignaciones() {
+    public List<AssignmentResponse> getAllAsignaciones() {
         return asignacionRepository.findAll().stream()
                 .map(asignacionMapper::toResponse)
                 .collect(Collectors.toList());
