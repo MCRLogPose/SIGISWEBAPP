@@ -59,7 +59,7 @@ public class IncidencyService {
                 .orElseThrow(() -> new RuntimeException("Ubicacion no encontrada con id: " + dto.getLocationId())));
         if (dto.getImage() != null && !dto.getImage().isEmpty()) {
             try {
-                String uploadsDir = "uploads/";
+                String uploadsDir = "static/uploads/";
                 String originalFilename = dto.getImage().getOriginalFilename();
                 Path uploadPath = Paths.get(uploadsDir);
 
