@@ -1,6 +1,7 @@
 package com.sigis.prueba.incidency.service;
 
 import com.sigis.prueba.auth.repository.UserRepository;
+import com.sigis.prueba.auth.security.AuthenticatedUserProvider;
 import com.sigis.prueba.incidency.dto.IncidencyRequest;
 import com.sigis.prueba.incidency.dto.IncidencyResponse;
 import com.sigis.prueba.incidency.mapper.IncidencyMapper;
@@ -34,6 +35,8 @@ public class IncidencyService {
 
     @Autowired
     private IncidencyMapper incidencyMapper;
+    @Autowired
+    private AuthenticatedUserProvider authenticatedUserProvider;
 
     public IncidencyResponse createIncidency(IncidencyRequest dto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -104,6 +107,14 @@ public class IncidencyService {
 
     public List<IncidencyResponse> getIncidenciasCompletadas() {
         return incidencyRepository.findByState("completado")
+                .stream()
+                .map(incidencyMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+    public List<IncidencyResponse> getMisIncidencias() {
+        UserModel currentUser = authenticatedUserProvider.getCurrentUser();
+
+        return incidencyRepository.findByUser(currentUser)
                 .stream()
                 .map(incidencyMapper::toResponse)
                 .collect(Collectors.toList());

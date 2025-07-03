@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -29,4 +30,7 @@ public class AssignmentModel {
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserModel user;
+
+    @OneToMany(mappedBy = "assignment", cascade = CascadeType.ALL)
+    private List<AssignmentHistoryModel> history;
 }

@@ -30,16 +30,19 @@ public class UserModel {
     private RolModel rol;
 
     @OneToOne(mappedBy = "user")
+    @JsonManagedReference
     private TwoFAModel user2FA;
 
     @OneToOne(mappedBy = "user")
+    @JsonManagedReference
     private CredentialsModel userCredentials;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-
+    @JsonManagedReference
     private List<TokenModel> tokens;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private OperarioDetails operarioDetails;
 
 

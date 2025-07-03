@@ -3,6 +3,7 @@ package com.sigis.prueba.auth.service;
 import com.sigis.prueba.auth.dto.*;
 import com.sigis.prueba.auth.model.*;
 import com.sigis.prueba.auth.repository.*;
+import com.sigis.prueba.common.exception.BadRequestException;
 import com.sigis.prueba.incidency.dto.IncidencyResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,10 +44,10 @@ public class AuthService {
 
     public RegisterResponse register(RegisterRequest request){
         if (userRepository.existsByUsername(request.getUsername())){
-            throw new RuntimeException("El username ya esta en uso");
+            throw new BadRequestException("El username ya esta en uso");
         }
         if (userRepository.existsByCorreo(request.getCorreo())){
-            throw new RuntimeException("El username ya esta en uso");
+            throw new BadRequestException("El correo ya esta en uso");
         }
 
         UserModel user = new UserModel();
@@ -61,10 +62,26 @@ public class AuthService {
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         user.setPassword(encodedPassword);
 
-        RolModel rolDefect = rolRepository.findByTipoRol("usuario")
-                .orElseThrow(()-> new RuntimeException("Rol no encontrado"));
-        user.setRol(rolDefect);
+        String tipoRol = request.getTipoRol() != null ? request.getTipoRol() : "usuario";
+        RolModel rol = rolRepository.findByTipoRol(tipoRol.toLowerCase())
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+
+        user.setRol(rol);
         user.setEstado("Active");
+
+
+        if ("operario".equalsIgnoreCase(rol.getTipoRol())) {
+            if (request.getEspecialidad() == null || request.getEspecialidad().isBlank()) {
+                throw new BadRequestException("La especialidad es requerida para el rol OPERARIO.");
+            }
+
+            OperarioDetails detalles = new OperarioDetails();
+            detalles.setUser(user);
+            detalles.setEspecialidad(request.getEspecialidad());
+            user.setOperarioDetails(detalles);
+        }
+
+
 
         UserModel savedUser = userRepository.save(user);
 

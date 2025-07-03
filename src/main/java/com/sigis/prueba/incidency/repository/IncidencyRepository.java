@@ -1,5 +1,6 @@
 package com.sigis.prueba.incidency.repository;
 
+import com.sigis.prueba.auth.model.UserModel;
 import com.sigis.prueba.incidency.model.IncidencyModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -10,5 +11,6 @@ import java.util.Optional;
 public interface IncidencyRepository extends JpaRepository<IncidencyModel, Long> {
     //Optional<IncidencyModel> findByIncidency (String id);
     List<IncidencyModel> findByState(String estado);
+    List<IncidencyModel> findByUser(UserModel user);
 
 }

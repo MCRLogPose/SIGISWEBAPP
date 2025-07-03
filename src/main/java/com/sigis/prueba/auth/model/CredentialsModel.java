@@ -1,5 +1,6 @@
 package com.sigis.prueba.auth.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,6 +15,7 @@ public class CredentialsModel {
     private long id;
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JsonBackReference
     private UserModel user;
     private String passwordHash;
     private String salt;
