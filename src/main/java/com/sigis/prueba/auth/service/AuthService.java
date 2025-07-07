@@ -129,6 +129,7 @@ public class AuthService {
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream().map(user -> {
             UserResponse dto = new UserResponse();
+            dto.setId(user.getId());
             dto.setNombre(user.getNombre());
             dto.setApellidos(user.getApellidos());
             dto.setTelefono(user.getTelefono());
