@@ -2,6 +2,7 @@ package com.sigis.prueba.assignment.service;
 
 import com.sigis.prueba.assignment.dto.AssignmentHistoryRequest;
 import com.sigis.prueba.assignment.dto.AssignmentHistoryResponse;
+import com.sigis.prueba.assignment.mapper.AssignmentHistoryMapper;
 import com.sigis.prueba.assignment.model.AssignmentHistoryModel;
 import com.sigis.prueba.assignment.model.AssignmentModel;
 import com.sigis.prueba.assignment.repository.AssignmentHistoryRepository;
@@ -30,6 +31,9 @@ public class AssignmentHistoryService {
     @Autowired
     private AuthenticatedUserProvider authenticatedUserProvider;
 
+    @Autowired
+    private AssignmentHistoryMapper assignmentHistoryMapper;
+
     public AssignmentHistoryResponse saveHistory(AssignmentHistoryRequest request) {
         AssignmentModel assignment = assignmentRepository.findById(request.getAssignmentId())
                 .orElseThrow(() -> new RuntimeException("Assignment not found"));
@@ -46,14 +50,7 @@ public class AssignmentHistoryService {
         AssignmentHistoryModel saved = historyRepository.save(history);
 
         // Map manual (puedes usar MapStruct o ModelMapper si prefieres)
-        AssignmentHistoryResponse dto = new AssignmentHistoryResponse();
-        dto.setId(saved.getId());
-        dto.setState(saved.getState());
-        dto.setResponse(saved.getResponse());
-        dto.setCreatedAt(saved.getCreatedAt());
-        dto.setUsername(user.getUsername());
-
-        return dto;
+        return assignmentHistoryMapper.toResponse(saved);
     }
 
 

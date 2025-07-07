@@ -1,8 +1,6 @@
 package com.sigis.prueba.assignment.controller;
 
-import com.sigis.prueba.assignment.dto.AssignmentRequest;
-import com.sigis.prueba.assignment.dto.AssignmentResponse;
-import com.sigis.prueba.assignment.dto.AssignmentByIncidenceResponse;
+import com.sigis.prueba.assignment.dto.*;
 import com.sigis.prueba.assignment.service.AssignmentService;
 import com.sigis.prueba.assignment.service.AssignmentGroupService;
 import com.sigis.prueba.assignment.service.UpdateEstadoService;
@@ -28,6 +26,15 @@ public class AsignacionController {
     @PostMapping("/assignments")
     public AssignmentResponse createAsignacion(@RequestBody AssignmentRequest request) {
         return asignacionService.createAsignacion(request);
+    }
+    @PostMapping("/admin/assigned")
+    public ResponseEntity<List<AssignmentResponse>> assignUsersToIncidency(@RequestBody AssignmentGroupRequest dto) {
+        return ResponseEntity.ok(asignacionService.asignAssigment(dto));
+    }
+    @GetMapping("/incidencia/{id}")
+    public ResponseEntity<AssignmentGroupResponse> getByIncidency(@PathVariable Long id) {
+        AssignmentGroupResponse response = asignacionService.getAsignacionesByIncidencia(id);
+        return ResponseEntity.ok(response);
     }
     @GetMapping("/assignment")
     public List<AssignmentResponse> getAllAsignaciones() {

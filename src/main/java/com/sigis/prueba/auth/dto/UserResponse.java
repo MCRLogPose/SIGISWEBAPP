@@ -5,6 +5,7 @@ import java.util.List;
 
 @Data
 public class UserResponse {
+    private Long id;
     private String nombre;
     private String apellidos;
     private String telefono;
@@ -13,4 +14,6 @@ public class UserResponse {
     private String correo;
     private String rol;
     private List<String> modulos;
+    private String especialidad;
+    private String tipoRol;
 }

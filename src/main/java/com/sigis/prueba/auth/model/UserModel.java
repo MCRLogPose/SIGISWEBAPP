@@ -45,7 +45,6 @@ public class UserModel {
     @JsonManagedReference
     private OperarioDetails operarioDetails;
 
-
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt = new Date();
 

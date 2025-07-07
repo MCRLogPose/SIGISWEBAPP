@@ -1,5 +1,6 @@
 package com.sigis.prueba.incidency.dto;
 
+import com.sigis.prueba.auth.dto.UserResponse;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,9 +15,9 @@ public class IncidencyResponse {
     private String dateAccept;
     private String state;
 
-    private Long userId;
-    private Long categoryId;
-    private Long locationId;
+    private UserResponse user;
+    private CategoryResponse category;
+    private LocationResponse location;
 
 
 
