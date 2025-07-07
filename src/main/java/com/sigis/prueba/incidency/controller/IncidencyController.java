@@ -51,6 +51,12 @@ public class IncidencyController {
         List<UserResponse> users = authService.getAllUsers();
         return ResponseEntity.ok(users);
     }
+
+    @GetMapping("/operarios")
+    public ResponseEntity<List<UserResponse>> getOperarios() {
+        List<UserResponse> operarios = authService.getAllOperarios();
+        return ResponseEntity.ok(operarios);
+    }
     @GetMapping("/me")
     public ResponseEntity<List<IncidencyResponse>> getMisIncidencias() {
         List<IncidencyResponse> incidencias = incidencyService.getMisIncidencias();

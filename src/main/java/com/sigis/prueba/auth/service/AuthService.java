@@ -1,6 +1,7 @@
 package com.sigis.prueba.auth.service;
 
 import com.sigis.prueba.auth.dto.*;
+import com.sigis.prueba.auth.mapper.UserMapper;
 import com.sigis.prueba.auth.model.*;
 import com.sigis.prueba.auth.repository.*;
 import com.sigis.prueba.common.exception.BadRequestException;
@@ -15,6 +16,7 @@ import com.sigis.prueba.auth.security.JWTService;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthService {
@@ -41,6 +43,9 @@ public class AuthService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private UserMapper userMapper;
 
     public RegisterResponse register(RegisterRequest request){
         if (userRepository.existsByUsername(request.getUsername())){
@@ -80,8 +85,6 @@ public class AuthService {
             detalles.setEspecialidad(request.getEspecialidad());
             user.setOperarioDetails(detalles);
         }
-
-
 
         UserModel savedUser = userRepository.save(user);
 
@@ -145,6 +148,11 @@ public class AuthService {
             return dto;
         }).toList();
     }
-
+    public List<UserResponse> getAllOperarios() {
+        List<UserModel> operarios = userRepository.findByRol_TipoRolIgnoreCase("operario");
+        return operarios.stream()
+                .map(userMapper::toResponse)
+                .collect(Collectors.toList());
+    }
 
 }
