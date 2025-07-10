@@ -36,6 +36,7 @@ public class AssignmentGroupService {
             });
 
             AssignmentDTO asignado = new AssignmentDTO();
+            asignado.setAssignmentId(asignacion.getId());
             asignado.setUserId(asignacion.getUser().getId());
             asignado.setUsername(asignacion.getUser().getUsername());
             asignado.setResponse(asignacion.getResponse());
@@ -62,6 +63,7 @@ public class AssignmentGroupService {
         List<AssignmentDTO> asignados = asignaciones.stream().map(asignacion -> {
             AssignmentDTO asignado = new AssignmentDTO();
             UserModel user = asignacion.getUser();
+            asignado.setAssignmentId(asignacion.getId());
             asignado.setUserId(user.getId());
             asignado.setUsername(user.getUsername());
             asignado.setResponse(asignacion.getResponse());
