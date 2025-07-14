@@ -13,6 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UpdateEstadoService {
     @Autowired
@@ -39,12 +41,12 @@ public class UpdateEstadoService {
 
         asignacion.setUser(user);
         asignacion.setResponse(respuesta);
-        asignacion.setState("en proceso");
+        asignacion.setState("asignado");
         asignacionRepository.save(asignacion);
 
         IncidencyModel incidencia = asignacion.getIncidencyModel();
-        if ("asignado".equalsIgnoreCase(incidencia.getState())) {
-            incidencia.setState("en proceso");
+        if ("en proceso".equalsIgnoreCase(incidencia.getState())) {
+            incidencia.setState("asignado");
             incidencyRepository.save(incidencia);
         }
         return asignacionMapper.toResponse(asignacion);
@@ -62,6 +64,11 @@ public class UpdateEstadoService {
         asignacion.setState("culminado");
         asignacionRepository.save(asignacion);
 
+        IncidencyModel incidencia = asignacion.getIncidencyModel();
+        if ("en proceso".equalsIgnoreCase(incidencia.getState())) {
+            incidencia.setState("culminado");
+            incidencyRepository.save(incidencia);
+        }
         return asignacionMapper.toResponse(asignacion);
     }
 }

@@ -99,7 +99,7 @@ public class IncidencyService {
     }
 
     public List<IncidencyResponse> getIncidenciasCulminadas() {
-        return incidencyRepository.findByState("culminada")
+        return incidencyRepository.findByState("culminado")
                 .stream()
                 .map(incidencyMapper::toResponse)
                 .collect(Collectors.toList());
