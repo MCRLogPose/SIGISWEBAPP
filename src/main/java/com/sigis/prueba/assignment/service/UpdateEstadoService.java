@@ -41,14 +41,18 @@ public class UpdateEstadoService {
 
         asignacion.setUser(user);
         asignacion.setResponse(respuesta);
-        asignacion.setState("asignado");
-        asignacionRepository.save(asignacion);
-
         IncidencyModel incidencia = asignacion.getIncidencyModel();
-        if ("en proceso".equalsIgnoreCase(incidencia.getState())) {
+
+        if(incidencia.getState().equalsIgnoreCase("asignado")){//puede hacerse con incidencia o asignacio pues el state es el mismo
+            asignacion.setState("en proceso");
+            incidencia.setState("en proceso");
+        }else{
+            asignacion.setState("asignado");
             incidencia.setState("asignado");
-            incidencyRepository.save(incidencia);
         }
+        asignacionRepository.save(asignacion);
+        incidencyRepository.save(incidencia);
+
         return asignacionMapper.toResponse(asignacion);
     }
     public AssignmentResponse culminarAsignacion(Long asignacionId) {
